@@ -2,4 +2,8 @@
 source 'https://rubygems.org'
 
 gem 'ruby-trello'
+gem "github_api"
+
 gem 'dotenv'
+
+gem 'byebug'
