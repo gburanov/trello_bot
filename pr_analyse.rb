@@ -54,8 +54,13 @@ class PrAnalyse
   end
 
   def reviews
-    return paginated_reviews if paginated_reviews.count_pages == 0
-    paginated_reviews.last_page
+    return @reviews unless @reviews.nil?
+    if paginated_reviews.count_pages == 0
+      @reviews = paginated_reviews
+    else
+      @reviews = paginated_reviews.last_page
+    end
+    @reviews
   end
 
   def paginated_reviews

@@ -5,7 +5,7 @@ require 'byebug'
 require 'awesome_print'
 
 require_relative 'card_analyse'
-require_relative 'slack_notifier'
+require_relative 'notifier/slack_notifier'
 
 notifier = SlackNotifier.new
 

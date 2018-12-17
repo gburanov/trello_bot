@@ -14,8 +14,11 @@ class Validation
     notify
   end
 
-  def stale_days
-    (pr.time_diff / 1.day).round
+  def stale_time
+    days = (pr.time_diff / 1.day).round
+    return "#{days} days" if days >= 1
+    hours = (pr.time_diff / 1.hour).round
+    return "#{hours} hours"
   end
 
   def slackuser_for(user)
