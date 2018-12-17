@@ -1,6 +1,8 @@
 require 'github_api'
 
-require_relative 'mapper'
+require_relative 'validations/no_reviews'
+require_relative 'validations/not_reviewed'
+require_relative 'validations/unanswered_comments'
 
 Github.configure do |c|
   c.basic_auth = ENV["GITHUB_AUTH"]
@@ -15,33 +17,22 @@ class PrAnalyse
     @notifier = notifier
   end
 
-
   def call
     if Github.new.pull_requests.merged?(org, name, number)
       puts "#{url} already merged, next one"
       return
     end
-    if reviews.count == 0
-      puts "#{url} does not have reviews yet!"
-      return
-    end
+    return unless NoReviewsValidation.new(self, notifier).call
     if not_approved_reviewers.count == 0
       puts "#{url} is approved already"
       return
     end
-    if time_diff < 3.hours
-      puts "#{url} was created less then 3 hours ago"
-      return 
-    end
-
-    if comments[-1].user.login != creator || ap comments[-1].created_at > last_commit_time
-      return 
-    end
-
-    NotReviewedValidation.new(pr, notifier).call
+    return unless UnansweredCommentsValidation.new(self, notifier).call
+    return unless NotReviewedValidation.new(self, notifier).call
   end
 
-  private
+  def last_author_comment
+  end
 
   def last_commit_time
     commits[-1].commit.committer.date
@@ -60,15 +51,15 @@ class PrAnalyse
   end
 
   def comments
-    @comments ||= Github.new.pull_requests.comments.list(org, name, number)
+    @comments ||= Github.new.pull_requests.comments.get(user: org, repo: name, number: number, direction: 'desc', sort: 'created')
   end
 
   def commits
-    @commits ||= Github.new.pull_requests.commits(org, name, number)
+    @commits ||= Github.new.pull_requests.commits(org, name, number).last_page
   end
 
   def reviews
-    @reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
+    @reviews ||= Github.new.pull_requests.reviews.list(org, name, number).last_page
   end
 
   def pr

@@ -1,16 +1,15 @@
-require_relative 'mapper'
+require_relative 'validation'
 
 class NotReviewedValidation < Validation
-  def initialize(pr, notifier)
-    @pr = pr
-    @notifier = notifier
+  def failed?
+    pr.time_diff > 3.hours
   end
 
-  def call
+  def notify
     text = "#{pr.url} is stale for #{(pr.time_diff / 1.day).round} day(s)! Please take a look"
-    pr.not_approved_reviewers.map { |gu| GitHubToSlackMaper.new(gu).call }
-    slack_users.each do |u|
-      notifier.notify_person(u, text)
+    pr.not_approved_reviewers.map do reviewer
+      notifier.notify_person(slackuser_for(reviewer), text)
     end
+    return false
   end
 end
