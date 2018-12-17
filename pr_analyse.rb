@@ -4,6 +4,8 @@ require_relative 'validations/no_reviews'
 require_relative 'validations/not_reviewed'
 require_relative 'validations/unanswered_comments'
 
+raise "GITHUB_AUTH not found" if ENV["GITHUB_AUTH"].nil?
+
 Github.configure do |c|
   c.basic_auth = ENV["GITHUB_AUTH"]
 end
