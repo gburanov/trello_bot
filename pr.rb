@@ -12,14 +12,31 @@ class PrAnalyse
       puts "#{url} already merged, next one"
       return
     end
+    if reviewers.count == 0
+      puts "#{url} does not have reviewers"
+      return
+    end
+
+    if (Time.now() - 3.hours...Time.now()).cover?(pr.updated_at)
+      puts "#{url} was created less then 3 hours ago"
+      return 
+    end
 
     byebug
   end
 
   private
 
+  def creator
+    pr.user.login
+  end
+
   def reviewers
-    reviews.map{ |r| r.user.login }
+    reviews.map{ |r| r.user.login }.flatten - [creator]
+  end
+
+  def pr
+    @pr ||=  Github.new.pull_requests.get(org, name, number)
   end
 
   def reviews
