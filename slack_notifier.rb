@@ -13,4 +13,9 @@ class SlackNotifier
     puts text
     client.chat_postMessage(channel: SLACK_CHANNEL, text: text)
   end
+
+  def notify_person(person, text)
+    text = "@#{person}, #{text}"
+    message(text)
+  end
 end

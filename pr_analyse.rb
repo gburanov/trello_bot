@@ -1,5 +1,11 @@
 require 'github_api'
 
+require_relative 'mapper'
+
+Github.configure do |c|
+  c.basic_auth = ENV["GITHUB_AUTH"]
+end
+
 class PrAnalyse
   attr_reader :url
   attr_reader :notifier
@@ -23,15 +29,24 @@ class PrAnalyse
       return
     end
 
-    if (Time.now() - 3.hours...Time.now()).cover?(pr.updated_at)
+    if time_diff < 3.hours
       puts "#{url} was created less then 3 hours ago"
       return 
     end
 
-    notifier.message("#{not_approved_reviewers.join(', ')} for #{url} should be notified")
+    text = "#{url} can be reviewed for #{time_diff}"
+
+    slack_users = not_approved_reviewers.map { |gu| GitHubToSlackMaper.new(gu).call }
+    slack_users.each do |u|
+      notifier.notify_person(u, text)
+    end
   end
 
   private
+
+  def time_diff
+    Time.now() - Time.parse(pr.updated_at)
+  end
 
   def creator
     pr.user.login

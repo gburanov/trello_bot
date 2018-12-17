@@ -5,16 +5,11 @@ require 'byebug'
 require 'awesome_print'
 
 require_relative 'card_analyse'
-require_relative 'pr_analyse'
-require_relative 'init'
-require_relative 'notifier'
+require_relative 'slack_notifier'
 
-Init.new.init_apis
+notifier = SlackNotifier.new
 
-notifier = Notifier.new
-
-list = Trello::List.find(ENV['LIST_ID'])
-cards = list.cards
+cards = CardAnalyse.in_review
 
 cards.each do |card|
   CardAnalyse.new(card, notifier).call
