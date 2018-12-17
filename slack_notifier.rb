@@ -15,7 +15,14 @@ class SlackNotifier
   end
 
   def notify_person(person, text)
-    text = "@#{person}, #{text}"
+    id = slack_id(person)
+    text = "Hey #{person}, #{text}"
     message(text)
+  end
+
+  def slack_id(person)
+    client.users_info(user: person).user.id
+  rescue 
+    raise "Unable to find user #{person}"
   end
 end

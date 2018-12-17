@@ -5,6 +5,7 @@ gem 'ruby-trello'
 gem "github_api"
 
 gem 'dotenv'
+gem 'whenever'
 
 gem 'byebug'
 gem 'awesome_print'
