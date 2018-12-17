@@ -8,3 +8,5 @@ gem 'dotenv'
 
 gem 'byebug'
 gem 'awesome_print'
+
+gem 'slack-ruby-client'

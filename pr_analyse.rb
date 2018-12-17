@@ -2,9 +2,11 @@ require 'github_api'
 
 class PrAnalyse
   attr_reader :url
+  attr_reader :notifier
 
-  def initialize(url)
+  def initialize(url, notifier = nil)
     @url = url
+    @notifier = notifier
   end
 
   def call
@@ -12,8 +14,12 @@ class PrAnalyse
       puts "#{url} already merged, next one"
       return
     end
-    if reviewers.count == 0
-      puts "#{url} does not have reviewers"
+    if reviews.count == 0
+      puts "#{url} does not have reviews yet!"
+      return
+    end
+    if not_approved_reviewers.count == 0
+      puts "#{url} is approved already"
       return
     end
 
@@ -22,7 +28,7 @@ class PrAnalyse
       return 
     end
 
-    byebug
+    notifier.message("#{not_approved_reviewers.join(', ')} for #{url} should be notified")
   end
 
   private
@@ -31,12 +37,16 @@ class PrAnalyse
     pr.user.login
   end
 
-  def reviewers
-    reviews.map{ |r| r.user.login }.flatten - [creator]
+  def not_approved_reviewers
+    not_approved_reviews.map{ |r| r.user.login }.uniq - [creator]
   end
 
   def pr
     @pr ||=  Github.new.pull_requests.get(org, name, number)
+  end
+
+  def not_approved_reviews
+    reviews.select{ |r| r.state != 'APPROVED' }
   end
 
   def reviews

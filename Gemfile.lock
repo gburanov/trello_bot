@@ -20,12 +20,15 @@ GEM
     dotenv (2.5.0)
     faraday (0.15.4)
       multipart-post (>= 1.2, < 3)
+    faraday_middleware (0.12.2)
+      faraday (>= 0.7.4, < 1.0)
     github_api (0.18.2)
       addressable (~> 2.4)
       descendants_tracker (~> 0.0.4)
       faraday (~> 0.8)
       hashie (~> 3.5, >= 3.5.2)
       oauth2 (~> 1.0)
+    gli (2.18.0)
     hashie (3.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
@@ -60,12 +63,22 @@ GEM
       json
       oauth (>= 0.4.5)
       rest-client (>= 1.8.0)
+    slack-ruby-client (0.13.1)
+      activesupport
+      faraday (>= 0.9)
+      faraday_middleware
+      gli
+      hashie
+      websocket-driver
     thread_safe (0.3.6)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
+    websocket-driver (0.7.0)
+      websocket-extensions (>= 0.1.0)
+    websocket-extensions (0.1.3)
 
 PLATFORMS
   ruby
@@ -76,6 +89,7 @@ DEPENDENCIES
   dotenv
   github_api
   ruby-trello
+  slack-ruby-client
 
 BUNDLED WITH
    1.16.2
