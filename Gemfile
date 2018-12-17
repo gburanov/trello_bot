@@ -7,3 +7,4 @@ gem "github_api"
 gem 'dotenv'
 
 gem 'byebug'
+gem 'awesome_print'

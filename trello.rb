@@ -1,6 +1,7 @@
 require 'trello'
 require 'dotenv'
 require 'byebug'
+require 'awesome_print'
 
 require_relative 'ticket'
 require_relative 'pr'
