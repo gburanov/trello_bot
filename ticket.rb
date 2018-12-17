@@ -6,7 +6,9 @@ class CardAnalyse
   end
 
   def call
-    byebug
+    prs.each do |url|
+      PrAnalyse.new(url).call
+    end
   end
 
   private

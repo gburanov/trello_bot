@@ -3,13 +3,10 @@ require 'dotenv'
 require 'byebug'
 
 require_relative 'ticket'
+require_relative 'pr'
+require_relative 'init'
 
-Dotenv.load
-
-Trello.configure do |config|
-  config.developer_public_key = ENV["TRELLO_KEY"]
-  config.member_token = ENV["TRELLO_TOKEN"]
-end
+Init.new.init_apis
 
 list = Trello::List.find(ENV['LIST_ID'])
 cards = list.cards
