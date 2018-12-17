@@ -12,7 +12,7 @@ class PrAnalyse
   attr_reader :url
   attr_reader :notifier
 
-  def initialize(url, notifier = nil)
+  def initialize(url, notifier = TextNotifier.new)
     @url = url
     @notifier = notifier
   end
@@ -40,7 +40,7 @@ class PrAnalyse
   end
 
   def not_approved_reviewers
-    not_approved_reviews.map{ |r| r.user.login }.uniq - [creator]
+    not_approved_reviews.map{ |r| r.user.login }.uniq
   end
 
   def comments
@@ -52,7 +52,12 @@ class PrAnalyse
   end
 
   def reviews
-    @reviews ||= Github.new.pull_requests.reviews.list(org, name, number).last_page
+    return paginated_reviews if paginated_reviews.count_pages == 0
+    paginated_reviews.last_page
+  end
+
+  def paginated_reviews
+    @paginated_reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
   end
 
   def pr
@@ -60,7 +65,7 @@ class PrAnalyse
   end
 
   def not_approved_reviews
-    reviews.select{ |r| r.state != 'APPROVED' }
+    reviews.select{ |r| r.state != 'APPROVED' }.reject{ |r| r.user.login == creator }
   end
 
   def spilit

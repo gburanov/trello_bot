@@ -7,7 +7,7 @@ class NoReviewsValidation < Validation
 
   def notify
     text = "#{pr.url} has no reviewers for #{stale_days} days. Who wanna review?"
-    notifier.notify(text)
+    notifier.message(text)
     return false
   end
 end

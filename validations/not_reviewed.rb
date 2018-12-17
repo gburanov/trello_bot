@@ -7,7 +7,8 @@ class NotReviewedValidation < Validation
 
   def notify
     text = "#{pr.url} is stale for #{(pr.time_diff / 1.day).round} day(s)! Please take a look"
-    pr.not_approved_reviewers.map do reviewer
+    byebug
+    pr.not_approved_reviewers.map do |reviewer|
       notifier.notify_person(slackuser_for(reviewer), text)
     end
     return false

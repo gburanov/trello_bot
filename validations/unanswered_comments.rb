@@ -32,7 +32,7 @@ class UnansweredCommentsValidation < Validation
   end
 
   def last_review
-    pr.reviews[-1]
+    pr.not_approved_reviews[-1]
   end
 
   def last_author_comment
