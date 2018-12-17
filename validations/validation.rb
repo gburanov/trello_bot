@@ -19,6 +19,6 @@ class Validation
   end
 
   def slackuser_for(user)
-    GitHubToSlackMaper.new(gu).call
+    GitHubToSlackMaper.new(user).call
   end
 end

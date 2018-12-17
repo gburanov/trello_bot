@@ -31,13 +31,6 @@ class PrAnalyse
     return unless NotReviewedValidation.new(self, notifier).call
   end
 
-  def last_author_comment
-  end
-
-  def last_commit_time
-    commits[-1].commit.committer.date
-  end
-
   def time_diff
     Time.now() - Time.parse(pr.updated_at)
   end
@@ -55,7 +48,7 @@ class PrAnalyse
   end
 
   def commits
-    @commits ||= Github.new.pull_requests.commits(org, name, number).last_page
+    @commits ||= Github.new.pull_requests.commits(org, name, number)
   end
 
   def reviews
