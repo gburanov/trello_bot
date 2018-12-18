@@ -1,6 +1,6 @@
 require_relative '../mapper'
 
-class Validation
+class PrValidation
   attr_reader :pr
   attr_reader :notifier
 

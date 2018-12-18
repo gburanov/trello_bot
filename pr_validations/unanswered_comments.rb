@@ -1,6 +1,6 @@
 require_relative 'validation'
 
-class UnansweredCommentsValidation < Validation
+class UnansweredCommentsValidation < PrValidation
   def failed?
     unanswered_comment || unanswered_review
   end

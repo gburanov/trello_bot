@@ -1,5 +1,7 @@
 require 'trello'
 
+require_relative 'card_validations/all_approved'
+
 require_relative 'pr_analyse'
 
 Trello.configure do |config|
@@ -21,12 +23,31 @@ class CardAnalyse
   end
 
   def call
-    prs.each do |url|
-      PrAnalyse.new(url, notifier).call
-    end
+    return unless AllApprovedValidation.new(self, notifier).call
+    analysers.each { |a| a.call }
+  end
+
+  def url
+    card.url
+  end
+
+  def creator
+    analysers.first.creator
+  end
+
+  def unapproved_ps
+    @unapproved_ps ||= analysers.reject { |a| a.approved? }
+  end
+
+  def reviewers
+    @reviewers ||= analysers.map { |a| a.reviewers }.flatten.uniq
   end
 
   private
+
+  def analysers
+    @analysers ||= prs.map { |url|  PrAnalyse.new(self, url, notifier) }
+  end
 
   def prs
     card.attachments.map(&:url).select{ |u| u.include?('github.com') }

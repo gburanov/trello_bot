@@ -13,6 +13,7 @@ class GitHubToSlackMaper
     return '@georgy' if github_user =='gburanov'
     return '@aleksandr.dorofeev' if github_user == 'akaspin'
     return '@ana' if github_user == "asusac"
+    return '@wmadden' if github_user == "wmadden"
     raise "Unknown github user #{github_user}"
   end
 end

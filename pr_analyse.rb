@@ -1,8 +1,8 @@
 require 'github_api'
 
-require_relative 'validations/no_reviews'
-require_relative 'validations/not_reviewed'
-require_relative 'validations/unanswered_comments'
+require_relative 'pr_validations/no_reviews'
+require_relative 'pr_validations/not_reviewed'
+require_relative 'pr_validations/unanswered_comments'
 
 raise "GITHUB_AUTH not found" if ENV["GITHUB_AUTH"].nil?
 
@@ -13,14 +13,16 @@ end
 class PrAnalyse
   attr_reader :url
   attr_reader :notifier
+  attr_reader :card
 
-  def initialize(url, notifier = TextNotifier.new)
+  def initialize(card, url, notifier = TextNotifier.new)
+    @card = card
     @url = url
     @notifier = notifier
   end
 
   def call
-    if Github.new.pull_requests.merged?(org, name, number)
+    if merged?
       puts "#{url} already merged, next one"
       return
     end
@@ -33,6 +35,14 @@ class PrAnalyse
     return unless NotReviewedValidation.new(self, notifier).call
   end
 
+  def approved?
+    merged?
+  end
+
+  def merged?
+    @merged ||= Github.new.pull_requests.merged?(org, name, number)
+  end
+
   def time_diff
     Time.now() - Time.parse(pr.updated_at)
   end
@@ -42,7 +52,11 @@ class PrAnalyse
   end
 
   def not_approved_reviewers
-    not_approved_reviews.map{ |r| r.user.login }.uniq
+    @not_approved_reviewers ||= not_approved_reviews.map{ |r| r.user.login }.uniq
+  end
+
+  def reviewers
+    @reviewers ||= reviews.reject{ |r| r.user.login == creator }.map{ |r| r.user.login }.uniq
   end
 
   def comments
