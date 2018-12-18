@@ -39,10 +39,6 @@ class PrAnalyse
     merged?
   end
 
-  def merged?
-    @merged ||= Github.new.pull_requests.merged?(org, name, number)
-  end
-
   def time_diff
     Time.now() - Time.parse(pr.updated_at)
   end
@@ -59,12 +55,8 @@ class PrAnalyse
     @reviewers ||= reviews.reject{ |r| r.user.login == creator }.map{ |r| r.user.login }.uniq
   end
 
-  def comments
-    @comments ||= Github.new.pull_requests.comments.get(user: org, repo: name, number: number, direction: 'desc', sort: 'created')
-  end
-
-  def commits
-    @commits ||= Github.new.pull_requests.commits(org, name, number)
+  def paginated_reviews
+    @paginated_reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
   end
 
   def reviews
@@ -75,14 +67,6 @@ class PrAnalyse
       @reviews = paginated_reviews.last_page
     end
     @reviews
-  end
-
-  def paginated_reviews
-    @paginated_reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
-  end
-
-  def pr
-    @pr ||=  Github.new.pull_requests.get(org, name, number)
   end
 
   def not_approved_reviews
@@ -103,5 +87,21 @@ class PrAnalyse
 
   def org
     spilit[-4]
+  end
+
+  def merged?
+    @merged ||= Github.new.pull_requests.merged?(org, name, number)
+  end
+
+  def comments
+    @comments ||= Github.new.pull_requests.comments.get(user: org, repo: name, number: number, direction: 'desc', sort: 'created')
+  end
+
+  def commits
+    @commits ||= Github.new.pull_requests.commits(org, name, number)
+  end
+
+  def pr
+    @pr ||=  Github.new.pull_requests.get(org, name, number)
   end
 end

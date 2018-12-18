@@ -10,7 +10,6 @@ Trello.configure do |config|
 end
 
 class CardAnalyse
-  attr_reader :card
   attr_reader :notifier
 
   def self.in_review
@@ -44,6 +43,8 @@ class CardAnalyse
   end
 
   private
+
+  attr_reader :card
 
   def analysers
     @analysers ||= prs.map { |url|  PrAnalyse.new(self, url, notifier) }
