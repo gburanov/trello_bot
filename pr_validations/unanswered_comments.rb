@@ -27,8 +27,10 @@ class UnansweredCommentsValidation < PrValidation
   end
 
   def unanswered_comment
-    last_reviewer_comment.created_at > last_author_comment.created_at &&
-      last_reviewer_comment.created_at > last_commit_time
+    if last_author_comment  && last_author_comment.created_at > last_reviewer_comment.created_at
+      return false
+    end
+    last_reviewer_comment.created_at > last_commit_time
   end
 
   def last_review

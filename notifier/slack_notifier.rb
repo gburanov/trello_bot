@@ -18,13 +18,14 @@ class SlackNotifier
 
   def notify_person(person, text)
     id = slack_id(person)
-    text = "Hey #{person}, #{text}"
+    text = "Hey #{id}, #{text}"
     message(text)
   end
 
   def slack_id(person)
     return map_ids[person] if map_ids.key?(person)
     id = client.users_info(user: person).user.id
+    id = "<@#{id}>"
     map_ids[person] = id
     id
   rescue 

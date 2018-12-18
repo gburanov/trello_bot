@@ -17,6 +17,11 @@ describe PrAnalyse do
     expect(pr.reviews.count).to eq 7
   end
 
+  it 'shows correct prs count for pr' do
+    pr = MockPrAnalyser.new("https://github.com/remerge/proto/pull/43")
+    expect(pr.reviews.count).to eq 7
+  end
+
   it 'notifies for audience_sync pr' do
     PrAnalyse.new("https://github.com/remerge/audience_sync/pull/15", notifier).call
     expect(notifier.texts[0]).to include('Hey @aleksandr.dorofeev, https://github.com/remerge/audience_sync/pull/15 has unanswered review')

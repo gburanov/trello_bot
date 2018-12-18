@@ -55,10 +55,6 @@ class PrAnalyse
     @reviewers ||= reviews.reject{ |r| r.user.login == creator }.map{ |r| r.user.login }.uniq
   end
 
-  def paginated_reviews
-    @paginated_reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
-  end
-
   def reviews
     return @reviews unless @reviews.nil?
     if paginated_reviews.count_pages == 0
@@ -87,6 +83,10 @@ class PrAnalyse
 
   def org
     spilit[-4]
+  end
+
+  def paginated_reviews
+    @paginated_reviews ||= Github.new.pull_requests.reviews.list(org, name, number)
   end
 
   def merged?
